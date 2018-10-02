@@ -6,10 +6,10 @@ from redash.utils import json_dumps
 from redash.handlers.base import org_scoped_rule
 from redash.handlers.permissions import ObjectPermissionsListResource, CheckPermissionResource
 from redash.handlers.alerts import AlertResource, AlertListResource, AlertSubscriptionListResource, AlertSubscriptionResource
-from redash.handlers.dashboards import DashboardListResource, DashboardResource, DashboardShareResource, PublicDashboardResource 
+from redash.handlers.dashboards import DashboardListResource, DashboardResource, DashboardShareResource, PublicDashboardResource
 from redash.handlers.data_sources import DataSourceTypeListResource, DataSourceListResource, DataSourceSchemaResource, DataSourceResource, DataSourcePauseResource, DataSourceTestResource
 from redash.handlers.events import EventsResource
-from redash.handlers.queries import QueryForkResource, QueryRefreshResource, QueryListResource, QueryRecentResource, QuerySearchResource, QueryResource, MyQueriesResource
+from redash.handlers.queries import QueryArchiveResource, QueryForkResource, QueryRefreshResource, QueryListResource, QueryRecentResource, QuerySearchResource, QueryResource, MyQueriesResource
 from redash.handlers.query_results import QueryResultListResource, QueryResultResource, JobResource
 from redash.handlers.users import UserResource, UserListResource, UserInviteResource, UserResetPasswordResource, UserDisableResource
 from redash.handlers.visualizations import VisualizationListResource
@@ -79,6 +79,7 @@ api.add_org_resource(DashboardTagsResource, '/api/dashboards/tags', endpoint='da
 
 api.add_org_resource(QuerySearchResource, '/api/queries/search', endpoint='queries_search')
 api.add_org_resource(QueryRecentResource, '/api/queries/recent', endpoint='recent_queries')
+api.add_org_resource(QueryArchiveResource, '/api/queries/archive', endpoint='queries_archive')
 api.add_org_resource(QueryListResource, '/api/queries', endpoint='queries')
 api.add_org_resource(MyQueriesResource, '/api/queries/my', endpoint='my_queries')
 api.add_org_resource(QueryRefreshResource, '/api/queries/<query_id>/refresh', endpoint='query_refresh')
