@@ -39,6 +39,8 @@ from sqlalchemy import func
 from sqlalchemy_searchable import SearchQueryMixin, make_searchable, vectorizer
 from sqlalchemy_utils import generic_relationship, EmailType
 from sqlalchemy_utils.types import TSVectorType
+from sqlalchemy_utils.types.encrypted.encrypted_type import FernetEngine
+from sqlalchemy_utils import EncryptedType
 
 
 class SQLAlchemyExt(SQLAlchemy):
@@ -557,6 +559,14 @@ class Configuration(TypeDecorator):
         return ConfigurationContainer.from_json(value)
 
 
+class EncryptedConfiguration(EncryptedType):
+    def process_bind_param(self, value, dialect):
+        return super(EncryptedConfiguration, self).process_bind_param(value.to_json(), dialect)
+
+    def process_result_value(self, value, dialect):
+        return ConfigurationContainer.from_json(super(EncryptedConfiguration, self).process_result_value(value, dialect))
+
+
 @python_2_unicode_compatible
 class DataSource(BelongsToOrgMixin, db.Model):
     id = Column(db.Integer, primary_key=True)
@@ -565,7 +575,9 @@ class DataSource(BelongsToOrgMixin, db.Model):
 
     name = Column(db.String(255))
     type = Column(db.String(255))
-    options = Column(ConfigurationContainer.as_mutable(Configuration))
+    # TODO: remove
+    _options = Column('options', db.Text, default='{}')
+    options = Column('encrypted_options', ConfigurationContainer.as_mutable(EncryptedConfiguration(db.Text, settings.SECRET_KEY, FernetEngine)))
     queue_name = Column(db.String(255), default="queries")
     scheduled_queue_name = Column(db.String(255), default="scheduled_queries")
     created_at = Column(db.DateTime(True), default=db.func.now())
