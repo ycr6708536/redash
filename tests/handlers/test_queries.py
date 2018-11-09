@@ -148,8 +148,8 @@ class TestQueryListResourceGet(BaseTestCase):
 
     def test_filters_with_tags(self):
         q1 = self.factory.create_query(tags=[u'test'])
-        q2 = self.factory.create_query()
-        q3 = self.factory.create_query()
+        self.factory.create_query()
+        self.factory.create_query()
 
         rv = self.make_request('get', '/api/queries?tags=test')
         assert len(rv.json['results']) == 1
@@ -157,8 +157,8 @@ class TestQueryListResourceGet(BaseTestCase):
 
     def test_search_term(self):
         q1 = self.factory.create_query(name="Sales")
-        q2 = self.factory.create_query(name="Q1 sales")
-        q3 = self.factory.create_query(name="Ops")
+        self.factory.create_query(name="Q1 sales")
+        self.factory.create_query(name="Ops")
 
         rv = self.make_request('get', '/api/queries?q=sales')
         assert len(rv.json['results']) == 2
@@ -191,7 +191,7 @@ class TestQueryArchiveResourceGet(BaseTestCase):
     def test_returns_queries(self):
         q1 = self.factory.create_query(is_archived=True)
         q2 = self.factory.create_query(is_archived=True)
-        q3 = self.factory.create_query()
+        self.factory.create_query()
 
         rv = self.make_request('get', '/api/queries/archive')
 
@@ -201,7 +201,7 @@ class TestQueryArchiveResourceGet(BaseTestCase):
     def test_search_term(self):
         q1 = self.factory.create_query(name="Sales", is_archived=True)
         q2 = self.factory.create_query(name="Q1 sales", is_archived=True)
-        q3 = self.factory.create_query(name="Q2 sales")
+        self.factory.create_query(name="Q2 sales")
 
         rv = self.make_request('get', '/api/queries/archive?q=sales')
         assert len(rv.json['results']) == 2
