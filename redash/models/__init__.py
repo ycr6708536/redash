@@ -10,7 +10,7 @@ from sqlalchemy import distinct, or_, and_, UniqueConstraint
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import backref, contains_eager, joinedload
+from sqlalchemy.orm import backref, contains_eager, joinedload, subqueryload
 from sqlalchemy.orm.exc import NoResultFound  # noqa: F401
 from sqlalchemy import func
 from sqlalchemy_utils import generic_relationship
@@ -758,7 +758,9 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
     def all(cls, org, group_ids, user_id):
         query = (
             Dashboard.query
-            .options(joinedload(Dashboard.user))
+            .options(
+                subqueryload(Dashboard.user).load_only('_profile_image_url', 'name'),
+            )
             .outerjoin(Widget)
             .outerjoin(Visualization)
             .outerjoin(Query)
@@ -769,7 +771,7 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
                  (Dashboard.user_id == user_id) |
                  ((Widget.dashboard != None) & (Widget.visualization == None))),
                 Dashboard.org == org)
-            )
+            .distinct())
 
         query = query.filter(or_(Dashboard.user_id == user_id, Dashboard.is_draft == False))
 
